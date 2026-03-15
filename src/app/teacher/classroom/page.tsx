@@ -16,7 +16,7 @@ export default async function TeacherClassroomPage() {
 
   // Get all students linked to this teacher
   const linkedStudents = await prisma.teacherStudent.findMany({
-    where: { teacherId: dbUser.id },
+    where: dbUser.role === "ADMIN" ? {} : { teacherId: dbUser.id },
     include: {
       student: {
         include: {

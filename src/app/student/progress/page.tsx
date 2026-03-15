@@ -15,7 +15,7 @@ export default async function StudentProgressPage() {
   if (!dbUser || (dbUser.role !== "STUDENT" && dbUser.role !== "ADMIN")) redirect("/");
 
   const assignments = await prisma.assignment.findMany({
-    where: { studentId: dbUser.id },
+    where: dbUser.role === "ADMIN" ? {} : { studentId: dbUser.id },
     orderBy: { assignedAt: "desc" },
     include: { lesson: true },
   });

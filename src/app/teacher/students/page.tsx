@@ -15,7 +15,7 @@ export default async function TeacherStudentsPage() {
   if (!dbUser || (dbUser.role !== "TEACHER" && dbUser.role !== "ADMIN")) redirect("/");
 
   const linkedStudents = await prisma.teacherStudent.findMany({
-    where: { teacherId: dbUser.id },
+    where: dbUser.role === "ADMIN" ? {} : { teacherId: dbUser.id },
     include: {
       student: {
         include: {

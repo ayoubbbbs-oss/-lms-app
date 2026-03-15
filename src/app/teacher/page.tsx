@@ -14,28 +14,43 @@ export default async function TeacherDashboard() {
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
   if (!dbUser || (dbUser.role !== "TEACHER" && dbUser.role !== "ADMIN")) redirect("/");
 
-  const linkedStudents = await prisma.teacherStudent.findMany({
-    where: { teacherId: dbUser.id },
-    include: {
-      student: {
+  const isAdmin = dbUser.role === "ADMIN";
+
+  // Admin sees ALL teacher-student data; Teacher sees only their own
+  const linkedStudents = isAdmin
+    ? await prisma.teacherStudent.findMany({
         include: {
-          studentAssignments: {
-            orderBy: { assignedAt: "desc" },
+          student: {
             include: {
-              lesson: {
-                select: {
-                  title: true,
-                  contentType: true,
-                  category: true,
-                  cefrLevel: true,
+              studentAssignments: {
+                orderBy: { assignedAt: "desc" },
+                include: {
+                  lesson: {
+                    select: { title: true, contentType: true, category: true, cefrLevel: true },
+                  },
                 },
               },
             },
           },
         },
-      },
-    },
-  });
+      })
+    : await prisma.teacherStudent.findMany({
+        where: { teacherId: dbUser.id },
+        include: {
+          student: {
+            include: {
+              studentAssignments: {
+                orderBy: { assignedAt: "desc" },
+                include: {
+                  lesson: {
+                    select: { title: true, contentType: true, category: true, cefrLevel: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
 
   return (
     <TeacherDashboardClient

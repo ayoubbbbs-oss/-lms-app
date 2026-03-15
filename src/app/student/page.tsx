@@ -14,15 +14,24 @@ export default async function StudentDashboard() {
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
   if (!dbUser || (dbUser.role !== "STUDENT" && dbUser.role !== "ADMIN")) redirect("/");
 
-  const assignments = await prisma.assignment.findMany({
-    where: { studentId: dbUser.id },
-    orderBy: { assignedAt: "desc" },
-    include: { lesson: true },
-  });
+  const isAdmin = dbUser.role === "ADMIN";
+
+  // Admin sees ALL assignments across all students; Student sees only their own
+  const assignments = isAdmin
+    ? await prisma.assignment.findMany({
+        orderBy: { assignedAt: "desc" },
+        take: 20,
+        include: { lesson: true },
+      })
+    : await prisma.assignment.findMany({
+        where: { studentId: dbUser.id },
+        orderBy: { assignedAt: "desc" },
+        include: { lesson: true },
+      });
 
   return (
     <StudentDashboardClient
-      userName={dbUser.name}
+      userName={isAdmin ? "Admin (Student View)" : dbUser.name}
       assignments={assignments.map((a) => ({
         id: a.id,
         status: a.status,
