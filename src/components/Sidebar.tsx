@@ -32,6 +32,7 @@ const roleNavItems: Record<string, NavItem[]> = {
     { label: "Library", href: "/admin/library", icon: <BookOpen size={S} /> },
     { label: "Students", href: "/admin/students", icon: <GraduationCap size={S} /> },
     { label: "Teachers", href: "/admin/teachers", icon: <UserCheck size={S} /> },
+    { label: "Quizzes", href: "/admin/quizzes", icon: <FileText size={S} /> },
     { label: "Reports", href: "/admin/reports", icon: <BarChart3 size={S} /> },
     { label: "Settings", href: "/admin/settings", icon: <Settings size={S} /> },
   ],
