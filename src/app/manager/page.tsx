@@ -10,7 +10,7 @@ export default async function ManagerDashboard() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-  if (!dbUser || dbUser.role !== "MANAGER") redirect("/");
+  if (!dbUser || (dbUser.role !== "MANAGER" && dbUser.role !== "ADMIN")) redirect("/");
 
   const [teacherCount, studentCount, lessonCount, assignmentCount] = await Promise.all([
     prisma.user.count({ where: { role: "TEACHER" } }),

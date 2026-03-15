@@ -12,7 +12,7 @@ export default async function TeacherSettingsPage() {
   if (!user) redirect("/login");
 
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-  if (!dbUser || dbUser.role !== "TEACHER") redirect("/");
+  if (!dbUser || (dbUser.role !== "TEACHER" && dbUser.role !== "ADMIN")) redirect("/");
 
   return (
     <DashboardLayout role="TEACHER" userName={dbUser.name}>

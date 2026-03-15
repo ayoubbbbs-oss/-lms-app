@@ -9,7 +9,7 @@ export default async function ManagerSettings() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-  if (!dbUser || dbUser.role !== "MANAGER") redirect("/");
+  if (!dbUser || (dbUser.role !== "MANAGER" && dbUser.role !== "ADMIN")) redirect("/");
 
   return (
     <DashboardLayout role="MANAGER" userName={dbUser.name}>

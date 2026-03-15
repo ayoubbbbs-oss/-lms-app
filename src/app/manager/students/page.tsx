@@ -9,7 +9,7 @@ export default async function ManagerStudents() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-  if (!dbUser || dbUser.role !== "MANAGER") redirect("/");
+  if (!dbUser || (dbUser.role !== "MANAGER" && dbUser.role !== "ADMIN")) redirect("/");
 
   const students = await prisma.user.findMany({
     where: { role: "STUDENT" },

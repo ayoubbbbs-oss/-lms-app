@@ -9,7 +9,7 @@ export default async function ManagerReports() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-  if (!dbUser || dbUser.role !== "MANAGER") redirect("/");
+  if (!dbUser || (dbUser.role !== "MANAGER" && dbUser.role !== "ADMIN")) redirect("/");
 
   const assignments = await prisma.assignment.findMany({ select: { status: true } });
   const completed = assignments.filter((a) => a.status === "COMPLETED").length;

@@ -110,9 +110,35 @@ export default function Sidebar({
         })}
       </nav>
 
+      {/* Quick Switch — Admin only */}
+      {role === "ADMIN" && (
+        <div className="border-t border-slate-700 px-3 py-2">
+          <p className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5 px-1">
+            View as
+          </p>
+          <div className="space-y-0.5">
+            {[
+              { label: "Admin", href: "/admin", color: "bg-purple-500" },
+              { label: "Manager", href: "/manager", color: "bg-blue-500" },
+              { label: "Teacher", href: "/teacher", color: "bg-emerald-500" },
+              { label: "Student", href: "/student", color: "bg-amber-500" },
+            ].map((r) => (
+              <Link
+                key={r.href}
+                href={r.href}
+                className="flex items-center gap-2 px-2 py-1 rounded text-xs text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+              >
+                <span className={`w-2 h-2 rounded-full ${r.color}`} />
+                {r.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* User — compact */}
-      <div className="border-t border-slate-700 px-3 py-3">
-        <div className="flex items-center gap-2 mb-2">
+      <div className="border-t border-slate-700 px-3 py-2">
+        <div className="flex items-center gap-2 mb-1.5">
           <div className="w-7 h-7 bg-slate-600 rounded-full flex items-center justify-center text-xs font-medium">
             {userName.charAt(0).toUpperCase()}
           </div>

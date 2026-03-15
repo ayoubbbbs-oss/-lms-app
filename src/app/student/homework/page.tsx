@@ -12,7 +12,7 @@ export default async function StudentHomeworkPage() {
   if (!user) redirect("/login");
 
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-  if (!dbUser || dbUser.role !== "STUDENT") redirect("/");
+  if (!dbUser || (dbUser.role !== "STUDENT" && dbUser.role !== "ADMIN")) redirect("/");
 
   const assignments = await prisma.assignment.findMany({
     where: { studentId: dbUser.id },

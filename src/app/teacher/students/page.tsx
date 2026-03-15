@@ -12,7 +12,7 @@ export default async function TeacherStudentsPage() {
   if (!user) redirect("/login");
 
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-  if (!dbUser || dbUser.role !== "TEACHER") redirect("/");
+  if (!dbUser || (dbUser.role !== "TEACHER" && dbUser.role !== "ADMIN")) redirect("/");
 
   const linkedStudents = await prisma.teacherStudent.findMany({
     where: { teacherId: dbUser.id },
