@@ -1,0 +1,193 @@
+"use client";
+
+import { useState } from "react";
+import DashboardLayout from "@/components/DashboardLayout";
+import { getCategoryConfig, cefrColors } from "@/lib/lessonHelpers";
+import {
+  Users,
+  Search,
+  ChevronDown,
+  ChevronUp,
+  Mail,
+  BookOpen,
+  CheckCircle2,
+  Clock,
+} from "lucide-react";
+
+type StudentData = {
+  id: string;
+  name: string;
+  email: string;
+  assignments: {
+    id: string;
+    status: string;
+    assignedAt: string;
+    lesson: { title: string; category: string; cefrLevel: string | null };
+  }[];
+};
+
+export default function TeacherStudentsClient({
+  userName,
+  students,
+}: {
+  userName: string;
+  students: StudentData[];
+}) {
+  const [expandedStudent, setExpandedStudent] = useState<string | null>(
+    students[0]?.id || null
+  );
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const totalAssignments = students.reduce((s, st) => s + st.assignments.length, 0);
+  const completedTotal = students.reduce(
+    (s, st) => s + st.assignments.filter((a) => a.status === "COMPLETED").length, 0
+  );
+
+  const filtered = students.filter(
+    (s) =>
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <DashboardLayout role="TEACHER" userName={userName}>
+      <div className="px-8 py-6 bg-white border-b border-slate-200">
+        <h1 className="text-2xl font-bold text-slate-800">My Students</h1>
+        <p className="text-sm text-slate-500 mt-0.5">
+          {students.length} student{students.length !== 1 ? "s" : ""} assigned to you
+        </p>
+      </div>
+
+      <div className="px-8 py-6">
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-4 shadow-sm">
+            <div className="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center">
+              <Users size={20} className="text-blue-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-slate-800">{students.length}</p>
+              <p className="text-xs text-slate-500">Students</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-4 shadow-sm">
+            <div className="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center">
+              <BookOpen size={20} className="text-purple-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-purple-600">{totalAssignments}</p>
+              <p className="text-xs text-slate-500">Assignments</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-4 shadow-sm">
+            <div className="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center">
+              <CheckCircle2 size={20} className="text-green-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-green-600">{completedTotal}</p>
+              <p className="text-xs text-slate-500">Completed</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <div className="relative max-w-sm">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search students..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            />
+          </div>
+        </div>
+
+        {filtered.length === 0 ? (
+          <div className="bg-white rounded-2xl border border-slate-200 p-16 text-center shadow-sm">
+            <Users size={48} className="mx-auto text-slate-300 mb-3" />
+            <p className="text-slate-500 font-medium">No students found</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filtered.map((student) => {
+              const completed = student.assignments.filter((a) => a.status === "COMPLETED").length;
+              const total = student.assignments.length;
+              const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+              const isExpanded = expandedStudent === student.id;
+
+              return (
+                <div key={student.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                  <button
+                    onClick={() => setExpandedStudent(isExpanded ? null : student.id)}
+                    className="w-full flex items-center justify-between p-5 hover:bg-slate-50 transition-colors text-left"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                        {student.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-slate-800">{student.name}</h3>
+                        <p className="text-sm text-slate-400 flex items-center gap-1">
+                          <Mail size={12} /> {student.email}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className="text-right">
+                        <p className="text-sm font-semibold text-slate-700">{pct}%</p>
+                        <div className="w-24 bg-slate-200 rounded-full h-1.5 mt-1">
+                          <div className="bg-green-500 h-1.5 rounded-full" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                      {isExpanded ? <ChevronUp size={18} className="text-slate-400" /> : <ChevronDown size={18} className="text-slate-400" />}
+                    </div>
+                  </button>
+
+                  {isExpanded && (
+                    <div className="border-t border-slate-100 px-5 py-4">
+                      {student.assignments.length === 0 ? (
+                        <p className="text-sm text-slate-400 py-2">No lessons assigned yet.</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {student.assignments.map((a) => {
+                            const cat = getCategoryConfig(a.lesson.category);
+                            const cefr = a.lesson.cefrLevel ? cefrColors[a.lesson.cefrLevel] : null;
+                            return (
+                              <div key={a.id} className={`flex items-center justify-between p-3 rounded-xl ${cat.bg} border ${cat.border}`}>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-lg">{cat.icon}</span>
+                                  <div>
+                                    <p className={`text-sm font-medium ${cat.color}`}>{a.lesson.title}</p>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                      <span className="text-xs text-slate-400">{cat.label}</span>
+                                      {cefr && (
+                                        <span className={`${cefr.bg} ${cefr.text} text-[10px] font-bold px-1.5 py-0.5 rounded-full`}>
+                                          {a.lesson.cefrLevel}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                                  a.status === "COMPLETED" ? "bg-green-500 text-white"
+                                  : a.status === "IN_PROGRESS" ? "bg-amber-500 text-white"
+                                  : "bg-slate-200 text-slate-600"
+                                }`}>
+                                  {a.status.replace("_", " ")}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </DashboardLayout>
+  );
+}
