@@ -58,7 +58,7 @@ export default function TeacherNotesPanel({
   const navBtn = "w-9 h-9 rounded-full flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-500 disabled:opacity-30 transition-colors";
 
   return (
-    <aside className="bg-white border-r border-gray-200 flex flex-col flex-shrink-0 h-full">
+    <aside className="flex flex-col flex-shrink-0 h-full">
       {/* Orange notebook header — matches Off2Class exactly */}
       <div className="h-3 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-400 flex-shrink-0" />
       <div className="flex items-center justify-center py-2">

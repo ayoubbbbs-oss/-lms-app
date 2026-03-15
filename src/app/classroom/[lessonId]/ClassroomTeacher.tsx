@@ -101,152 +101,136 @@ export default function ClassroomTeacher({
   // ── End real-time logic ──
 
   const toolBtn =
-    "w-8 h-8 rounded flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors";
+    "w-8 h-8 rounded flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-200/60 transition-colors";
 
   return (
-    <div className="h-screen flex flex-col bg-white overflow-hidden">
-      {/* ═══ MAIN CONTENT — Left Notes + Right Slide ═══ */}
-      <div className="flex flex-1 min-h-0">
-        {/* ═══ LEFT COLUMN — Teacher Notes ═══ */}
-        <div className="flex flex-col w-[300px] flex-shrink-0 border-r border-gray-200">
-          <TeacherNotesPanel
-            notes={currentSlideData?.teacherNotes}
-            slideIndex={currentSlide}
-            slideTitle={currentSlideData?.title}
-            lessonTitle={lesson.title}
-            cefrLevel={lesson.cefrLevel}
-            totalSlides={totalSlides}
-            onPrev={prev}
-            onNext={next}
-            onFirst={() => goTo(0)}
-            onLast={() => goTo(totalSlides - 1)}
-            isFirst={isFirst}
-            isLast={isLast}
-          />
-        </div>
+    /* ═══ 1. OUTER BACKDROP — dark grey, fills viewport ═══ */
+    <div className="h-screen bg-[#404040] p-4 md:p-8 flex items-center justify-center overflow-hidden">
 
-        {/* ═══ RIGHT COLUMN — Toolbar + Slide + Nav ═══ */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Top toolbar — matches Off2Class: Canvas | Homework | audio | icons */}
-          <div className="bg-white border-b border-gray-200 px-4 h-10 flex items-center justify-between flex-shrink-0">
-            {/* Left: Tabs */}
-            <div className="flex items-center gap-2">
-              <Link
-                href={`/classroom/${lessonId}/canvas`}
-                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium transition-colors ${
-                  activeTab === "canvas"
-                    ? "text-gray-800"
-                    : "text-gray-400 hover:text-gray-600"
-                }`}
-                onClick={() => setActiveTab("canvas")}
-              >
-                <Image size={14} />
-                Canvas
-              </Link>
-              <button
-                onClick={() => setActiveTab("homework")}
-                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium transition-colors ${
-                  activeTab === "homework"
-                    ? "text-gray-800"
-                    : "text-gray-400 hover:text-gray-600"
-                }`}
-              >
-                <ListChecks size={14} />
-                Homework
-              </button>
+      {/* ═══ 2. MAIN APP CONTAINER — the "Box" ═══ */}
+      <div className="flex flex-col w-full max-w-[1400px] h-[90vh] bg-white rounded-xl overflow-hidden shadow-2xl relative">
 
-              {/* Session status */}
-              {sessionStatus === "ACTIVE" && (
-                <span className="flex items-center gap-1 text-[10px] font-semibold text-green-600 ml-2">
-                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                  Live
-                </span>
-              )}
-              {sessionStatus === "PAUSED" && (
-                <button
-                  onClick={handleResume}
-                  className="text-[10px] font-semibold text-amber-600 ml-2 hover:underline"
-                >
-                  Paused — Resume
-                </button>
-              )}
-              {!isConnected && (
-                <span className="text-[10px] text-red-400 ml-2 animate-pulse">
-                  Reconnecting...
-                </span>
-              )}
-            </div>
+        {/* ═══ CONTENT: Left Sidebar + Right Stage ═══ */}
+        <div className="flex flex-1 min-h-0">
 
-            {/* Right: Utility icons — matches Off2Class: A, pen, search, expand */}
-            <div className="flex items-center gap-0.5">
-              <button className={toolBtn} title="Text">
-                <Type size={15} />
-              </button>
-              <button className={toolBtn} title="Draw">
-                <PenTool size={15} />
-              </button>
-              <button className={toolBtn} title="Search">
-                <Search size={15} />
-              </button>
-              <button className={toolBtn} title="Fullscreen">
-                <Maximize2 size={15} />
-              </button>
-
-              {sessionStatus !== "ENDED" && sessionStatus === "ACTIVE" && (
-                <button
-                  onClick={handlePause}
-                  className="ml-2 text-[10px] font-medium text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  Pause
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Slide stage — white bg, slide fills the space */}
-          <div className="flex-1 min-h-0 bg-gray-50">
-            <SlideRenderer
-              slide={currentSlideData}
+          {/* ═══ 3. LEFT SIDEBAR — Teacher Notes ═══ */}
+          <div className="flex flex-col w-[320px] flex-shrink-0 bg-[#F9FAFB] border-r border-gray-200">
+            <TeacherNotesPanel
+              notes={currentSlideData?.teacherNotes}
               slideIndex={currentSlide}
-              direction={direction}
+              slideTitle={currentSlideData?.title}
+              lessonTitle={lesson.title}
+              cefrLevel={lesson.cefrLevel}
+              totalSlides={totalSlides}
+              onPrev={prev}
+              onNext={next}
+              onFirst={() => goTo(0)}
+              onLast={() => goTo(totalSlides - 1)}
+              isFirst={isFirst}
+              isLast={isLast}
             />
           </div>
 
-          {/* Bottom nav — right side only, gray circles centered */}
-          <SlideControls
-            currentSlide={currentSlide}
-            totalSlides={totalSlides}
-            onPrev={prev}
-            onNext={next}
-            isFirst={isFirst}
-            isLast={isLast}
-            disabled={sessionStatus === "ENDED"}
-            onFirst={() => goTo(0)}
-            onLast={() => goTo(totalSlides - 1)}
-          />
+          {/* ═══ 4. RIGHT AREA — Slide Stage ═══ */}
+          <div className="flex-1 flex flex-col min-w-0 bg-[#F3F4F6]">
+
+            {/* Top toolbar */}
+            <div className="bg-white border-b border-gray-200 px-4 h-10 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <Link
+                  href={`/classroom/${lessonId}/canvas`}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium transition-colors ${
+                    activeTab === "canvas" ? "text-gray-800" : "text-gray-400 hover:text-gray-600"
+                  }`}
+                  onClick={() => setActiveTab("canvas")}
+                >
+                  <Image size={14} />
+                  Canvas
+                </Link>
+                <button
+                  onClick={() => setActiveTab("homework")}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium transition-colors ${
+                    activeTab === "homework" ? "text-gray-800" : "text-gray-400 hover:text-gray-600"
+                  }`}
+                >
+                  <ListChecks size={14} />
+                  Homework
+                </button>
+
+                {sessionStatus === "ACTIVE" && (
+                  <span className="flex items-center gap-1 text-[10px] font-semibold text-green-600 ml-2">
+                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                    Live
+                  </span>
+                )}
+                {sessionStatus === "PAUSED" && (
+                  <button onClick={handleResume} className="text-[10px] font-semibold text-amber-600 ml-2 hover:underline">
+                    Paused — Resume
+                  </button>
+                )}
+                {!isConnected && (
+                  <span className="text-[10px] text-red-400 ml-2 animate-pulse">Reconnecting...</span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-0.5">
+                <button className={toolBtn} title="Text"><Type size={15} /></button>
+                <button className={toolBtn} title="Draw"><PenTool size={15} /></button>
+                <button className={toolBtn} title="Search"><Search size={15} /></button>
+                <button className={toolBtn} title="Fullscreen"><Maximize2 size={15} /></button>
+                {sessionStatus === "ACTIVE" && (
+                  <button onClick={handlePause} className="ml-2 text-[10px] font-medium text-gray-400 hover:text-gray-600">Pause</button>
+                )}
+              </div>
+            </div>
+
+            {/* Slide display — centered with padding, 16:9 aspect ratio */}
+            <div className="flex-1 min-h-0 flex items-center justify-center p-8">
+              <div className="w-full max-w-[850px] aspect-video rounded-lg overflow-hidden shadow-lg">
+                <SlideRenderer
+                  slide={currentSlideData}
+                  slideIndex={currentSlide}
+                  direction={direction}
+                />
+              </div>
+            </div>
+
+            {/* Bottom slide nav */}
+            <SlideControls
+              currentSlide={currentSlide}
+              totalSlides={totalSlides}
+              onPrev={prev}
+              onNext={next}
+              isFirst={isFirst}
+              isLast={isLast}
+              disabled={sessionStatus === "ENDED"}
+              onFirst={() => goTo(0)}
+              onLast={() => goTo(totalSlides - 1)}
+            />
+          </div>
+        </div>
+
+        {/* ═══ 5. ACTION BUTTONS — fixed at bottom of the 1400px box ═══ */}
+        <div className="flex w-full flex-shrink-0 h-14">
+          <button className="flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-[#F97316] text-white hover:brightness-110 transition-all">
+            Enroll Students
+          </button>
+          <button className="flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-[#EAB308] text-gray-800 hover:brightness-110 transition-all">
+            Take Notes
+          </button>
+          <button className="flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-[#84CC16] text-white hover:brightness-110 transition-all">
+            Give Us Feedback
+          </button>
+          <button
+            onClick={handleEnd}
+            className="flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-[#A855F7] text-white hover:brightness-110 transition-all"
+          >
+            Close Classroom
+          </button>
         </div>
       </div>
 
-      {/* ═══ BOTTOM ACTION BAR — 4 buttons in a row, full width ═══ */}
-      <div className="flex flex-shrink-0">
-        <button className="flex-1 h-10 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-[#e8740c] text-white hover:bg-[#d06500] transition-colors">
-          Enroll Students
-        </button>
-        <button className="flex-1 h-10 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-[#f5c518] text-gray-800 hover:bg-[#e0b200] transition-colors">
-          Take Notes
-        </button>
-        <button className="flex-1 h-10 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-[#7cb342] text-white hover:bg-[#689f38] transition-colors">
-          Give Us Feedback
-        </button>
-        <button
-          onClick={handleEnd}
-          className="flex-1 h-10 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-[#7b1fa2] text-white hover:bg-[#6a1b9a] transition-colors"
-        >
-          Close Classroom
-        </button>
-      </div>
-
-      {/* Chat */}
+      {/* Chat — outside the box, floating */}
       <ClassroomChat
         lessonId={lessonId}
         userName={userName}

@@ -42,7 +42,7 @@ export default function SlideRenderer({
   };
 
   return (
-    <div className="relative w-full h-full overflow-hidden bg-white">
+    <div className="relative w-full h-full overflow-hidden bg-white rounded-lg">
       <AnimatePresence initial={false} custom={direction} mode="wait">
         <motion.div
           key={slideIndex}
