@@ -29,27 +29,39 @@ export default function SlideControls({
   onLast?: () => void;
 }) {
   const btn =
-    "w-10 h-10 rounded-full flex items-center justify-center transition-all duration-150 bg-slate-200/80 hover:bg-slate-300 text-slate-600 disabled:opacity-25 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-1";
+    "w-9 h-9 rounded-full flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-500 disabled:opacity-30 transition-colors";
 
   return (
-    <div className="flex items-center justify-center gap-3 px-5 py-2 bg-slate-100 border-t border-slate-200 flex-shrink-0">
-      <button onClick={onFirst} disabled={disabled || isFirst} className={btn} title="First slide">
-        <ChevronsLeft size={16} />
+    <div className="flex items-center justify-center gap-2 py-2 bg-white border-t border-gray-200 flex-shrink-0">
+      <button onClick={onFirst} disabled={disabled || isFirst} className={btn}>
+        <ChevronsLeft size={14} />
       </button>
-      <button onClick={onPrev} disabled={disabled || isFirst} className={btn} title="Previous slide">
-        <ChevronLeft size={16} />
+      <button onClick={onPrev} disabled={disabled || isFirst} className={btn}>
+        <ChevronLeft size={14} />
       </button>
 
-      <span className="text-sm font-semibold text-slate-600 tabular-nums min-w-[80px] text-center select-none">
+      <span className="text-xs font-semibold text-gray-600 tabular-nums min-w-[60px] text-center select-none">
         {currentSlide + 1} of {totalSlides}
       </span>
 
-      <button onClick={onNext} disabled={disabled || isLast} className={btn} title="Next slide">
-        <ChevronRight size={16} />
+      <button onClick={onNext} disabled={disabled || isLast} className={btn}>
+        <ChevronRight size={14} />
       </button>
-      <button onClick={onLast} disabled={disabled || isLast} className={btn} title="Last slide">
-        <ChevronsRight size={16} />
+      <button onClick={onLast} disabled={disabled || isLast} className={btn}>
+        <ChevronsRight size={14} />
       </button>
+
+      {/* Progress bar like Off2Class */}
+      <div className="ml-4 flex gap-0.5">
+        {Array.from({ length: totalSlides }).map((_, i) => (
+          <div
+            key={i}
+            className={`h-1 rounded-full transition-all duration-300 ${
+              i <= currentSlide ? "w-3 bg-orange-500" : "w-3 bg-gray-200"
+            }`}
+          />
+        ))}
+      </div>
     </div>
   );
 }
