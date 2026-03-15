@@ -101,7 +101,7 @@ export default function ClassroomTeacher({
   // ── End real-time logic ──
 
   const toolBtn =
-    "w-8 h-8 rounded flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-200/60 transition-colors";
+    "w-12 h-12 rounded-lg flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-200/60 transition-colors";
 
   return (
     /* ═══ 1. OUTER BACKDROP — dark grey, fills viewport ═══ */
@@ -134,52 +134,52 @@ export default function ClassroomTeacher({
           {/* ═══ 4. RIGHT AREA — Slide Stage ═══ */}
           <div className="flex-1 flex flex-col min-w-0 bg-[#F3F4F6]">
 
-            {/* Top toolbar */}
-            <div className="bg-white border-b border-gray-200 px-4 h-10 flex items-center justify-between flex-shrink-0">
-              <div className="flex items-center gap-2">
+            {/* Top toolbar — CHUNKY */}
+            <div className="bg-white border-b border-gray-200 px-5 h-14 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-3">
                 <Link
                   href={`/classroom/${lessonId}/canvas`}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-2 text-base font-semibold transition-colors ${
                     activeTab === "canvas" ? "text-gray-800" : "text-gray-400 hover:text-gray-600"
                   }`}
                   onClick={() => setActiveTab("canvas")}
                 >
-                  <Image size={14} />
+                  <Image size={28} strokeWidth={2.5} />
                   Canvas
                 </Link>
                 <button
                   onClick={() => setActiveTab("homework")}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-2 text-base font-semibold transition-colors ${
                     activeTab === "homework" ? "text-gray-800" : "text-gray-400 hover:text-gray-600"
                   }`}
                 >
-                  <ListChecks size={14} />
+                  <ListChecks size={28} strokeWidth={2.5} />
                   Homework
                 </button>
 
                 {sessionStatus === "ACTIVE" && (
-                  <span className="flex items-center gap-1 text-[10px] font-semibold text-green-600 ml-2">
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                  <span className="flex items-center gap-2 text-sm font-bold text-green-600 ml-3">
+                    <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
                     Live
                   </span>
                 )}
                 {sessionStatus === "PAUSED" && (
-                  <button onClick={handleResume} className="text-[10px] font-semibold text-amber-600 ml-2 hover:underline">
+                  <button onClick={handleResume} className="text-sm font-bold text-amber-600 ml-3 hover:underline">
                     Paused — Resume
                   </button>
                 )}
                 {!isConnected && (
-                  <span className="text-[10px] text-red-400 ml-2 animate-pulse">Reconnecting...</span>
+                  <span className="text-sm text-red-400 ml-3 animate-pulse">Reconnecting...</span>
                 )}
               </div>
 
-              <div className="flex items-center gap-0.5">
-                <button className={toolBtn} title="Text"><Type size={15} /></button>
-                <button className={toolBtn} title="Draw"><PenTool size={15} /></button>
-                <button className={toolBtn} title="Search"><Search size={15} /></button>
-                <button className={toolBtn} title="Fullscreen"><Maximize2 size={15} /></button>
+              <div className="flex items-center gap-1">
+                <button className={toolBtn} title="Text"><Type size={28} strokeWidth={2.5} /></button>
+                <button className={toolBtn} title="Draw"><PenTool size={28} strokeWidth={2.5} /></button>
+                <button className={toolBtn} title="Search"><Search size={28} strokeWidth={2.5} /></button>
+                <button className={toolBtn} title="Fullscreen"><Maximize2 size={28} strokeWidth={2.5} /></button>
                 {sessionStatus === "ACTIVE" && (
-                  <button onClick={handlePause} className="ml-2 text-[10px] font-medium text-gray-400 hover:text-gray-600">Pause</button>
+                  <button onClick={handlePause} className="ml-3 text-base font-semibold text-gray-400 hover:text-gray-600">Pause</button>
                 )}
               </div>
             </div>
@@ -210,20 +210,20 @@ export default function ClassroomTeacher({
           </div>
         </div>
 
-        {/* ═══ 5. ACTION BUTTONS — fixed at bottom of the 1400px box ═══ */}
-        <div className="flex w-full flex-shrink-0 h-14">
-          <button className="flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-[#F97316] text-white hover:brightness-110 transition-all">
+        {/* ═══ 5. ACTION BUTTONS — CHUNKY, at bottom of box ═══ */}
+        <div className="flex w-full flex-shrink-0 h-16">
+          <button className="flex-1 flex items-center justify-center text-base font-bold uppercase tracking-wider bg-[#F97316] text-white hover:brightness-110 transition-all">
             Enroll Students
           </button>
-          <button className="flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-[#EAB308] text-gray-800 hover:brightness-110 transition-all">
+          <button className="flex-1 flex items-center justify-center text-base font-bold uppercase tracking-wider bg-[#EAB308] text-gray-800 hover:brightness-110 transition-all">
             Take Notes
           </button>
-          <button className="flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-[#84CC16] text-white hover:brightness-110 transition-all">
+          <button className="flex-1 flex items-center justify-center text-base font-bold uppercase tracking-wider bg-[#84CC16] text-white hover:brightness-110 transition-all">
             Give Us Feedback
           </button>
           <button
             onClick={handleEnd}
-            className="flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-[#A855F7] text-white hover:brightness-110 transition-all"
+            className="flex-1 flex items-center justify-center text-base font-bold uppercase tracking-wider bg-[#A855F7] text-white hover:brightness-110 transition-all"
           >
             Close Classroom
           </button>
