@@ -29,6 +29,8 @@ export default async function Home() {
   switch (dbUser.role) {
     case "ADMIN":
       redirect("/admin");
+    case "MANAGER":
+      redirect("/manager");
     case "TEACHER":
       redirect("/teacher");
     case "STUDENT":

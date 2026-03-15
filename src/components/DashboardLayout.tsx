@@ -14,7 +14,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-slate-50">
       <Sidebar role={role} userName={userName} />
-      <main className="ml-64 min-h-screen">{children}</main>
+      <main className="ml-[220px] min-h-screen">{children}</main>
     </div>
   );
 }
