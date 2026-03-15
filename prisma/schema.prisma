@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── ENUMS ───────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum AssignmentStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum CefrLevel {
+  A1
+  A2
+  B1
+  B2
+  C1
+  C2
+}
+
+enum LessonCategory {
+  GENERAL_ENGLISH
+  BUSINESS_ENGLISH
+  BEGINNERS
+  GRAMMAR
+  CONVERSATION
+  PRONUNCIATION
+  VOCABULARY
+  EXAM_PREP
+  YOUNG_LEARNERS
+}
+
+// ─── USERS ───────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  role      Role     @default(STUDENT)
+  avatarUrl String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Admin: lessons they created
+  createdLessons Lesson[] @relation("LessonCreator")
+
+  // Admin: assignments they made
+  createdAssignments Assignment[] @relation("AssignmentCreator")
+
+  // Student: assignments received
+  studentAssignments Assignment[] @relation("AssignmentStudent")
+
+  // Teacher: students linked to this teacher
+  teacherStudents TeacherStudent[] @relation("Teacher")
+
+  // Student: teachers linked to this student
+  studentTeachers TeacherStudent[] @relation("Student")
+
+  @@map("users")
+}
+
+// ─── LESSONS ─────────────────────────────────────────────
+
+model Lesson {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  contentUrl  String?  // URL to uploaded content (PDF, video, etc.)
+  contentType String?  // e.g. "pdf", "video", "interactive"
+  thumbnail   String?
+  cefrLevel   CefrLevel?
+  category    LessonCategory @default(GENERAL_ENGLISH)
+  teacherNotes String?       // Notes visible to teachers during lesson
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Who created this lesson (Admin)
+  createdBy   String
+  creator     User   @relation("LessonCreator", fields: [createdBy], references: [id])
+
+  // Assignments of this lesson to students
+  assignments Assignment[]
+
+  @@map("lessons")
+}
+
+// ─── ASSIGNMENTS ─────────────────────────────────────────
+// Links a specific lesson to a specific student (Admin-only action)
+
+model Assignment {
+  id     String           @id @default(uuid())
+  status AssignmentStatus @default(NOT_STARTED)
+
+  assignedAt  DateTime @default(now())
+  completedAt DateTime?
+
+  // The lesson being assigned
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  // The student receiving the assignment
+  studentId String
+  student   User   @relation("AssignmentStudent", fields: [studentId], references: [id], onDelete: Cascade)
+
+  // The admin who made this assignment
+  assignedBy String
+  assigner   User   @relation("AssignmentCreator", fields: [assignedBy], references: [id])
+
+  // A student can only be assigned the same lesson once
+  @@unique([lessonId, studentId])
+  @@map("assignments")
+}
+
+// ─── TEACHER ↔ STUDENT LINK ─────────────────────────────
+// Which teachers are responsible for which students (set by Admin)
+
+model TeacherStudent {
+  id String @id @default(uuid())
+
+  teacherId String
+  teacher   User   @relation("Teacher", fields: [teacherId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   User   @relation("Student", fields: [studentId], references: [id], onDelete: Cascade)
+
+  assignedAt DateTime @default(now())
+
+  // A teacher-student pair is unique
+  @@unique([teacherId, studentId])
+  @@map("teacher_students")
+}
