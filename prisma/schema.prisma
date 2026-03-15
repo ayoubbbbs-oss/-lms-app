@@ -42,6 +42,20 @@ enum LessonCategory {
   YOUNG_LEARNERS
 }
 
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+  FILL_IN_BLANK
+}
+
+enum SessionStatus {
+  WAITING
+  ACTIVE
+  PAUSED
+  ENDED
+}
+
 // ─── USERS ───────────────────────────────────────────────
 
 model User {
@@ -69,6 +83,11 @@ model User {
   // Student: teachers linked to this student
   studentTeachers TeacherStudent[] @relation("Student")
 
+  // Phase 1: Classroom & Placement
+  classroomSessions ClassroomSession[] @relation("SessionTeacher")
+  createdTests      PlacementTest[]    @relation("TestCreator")
+  studentScores     StudentScore[]     @relation("StudentScores")
+
   @@map("users")
 }
 
@@ -78,28 +97,29 @@ model Lesson {
   id          String   @id @default(uuid())
   title       String
   description String?
-  contentUrl  String?  // URL to uploaded content (PDF, video, etc.)
-  contentType String?  // e.g. "pdf", "video", "interactive"
+  contentUrl  String?
+  contentType String?
   thumbnail   String?
   cefrLevel   CefrLevel?
   category    LessonCategory @default(GENERAL_ENGLISH)
-  teacherNotes String?       // Notes visible to teachers during lesson
+  teacherNotes String?  // Legacy: single notes field. Per-slide notes now live in slides JSON.
+
+  // Slide-based content: [{ order, title?, contentUrl?, contentType?, teacherNotes? }]
+  slides Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Who created this lesson (Admin)
   createdBy   String
   creator     User   @relation("LessonCreator", fields: [createdBy], references: [id])
 
-  // Assignments of this lesson to students
-  assignments Assignment[]
+  assignments       Assignment[]
+  classroomSessions ClassroomSession[]
 
   @@map("lessons")
 }
 
 // ─── ASSIGNMENTS ─────────────────────────────────────────
-// Links a specific lesson to a specific student (Admin-only action)
 
 model Assignment {
   id     String           @id @default(uuid())
@@ -108,25 +128,20 @@ model Assignment {
   assignedAt  DateTime @default(now())
   completedAt DateTime?
 
-  // The lesson being assigned
   lessonId String
   lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
-  // The student receiving the assignment
   studentId String
   student   User   @relation("AssignmentStudent", fields: [studentId], references: [id], onDelete: Cascade)
 
-  // The admin who made this assignment
   assignedBy String
   assigner   User   @relation("AssignmentCreator", fields: [assignedBy], references: [id])
 
-  // A student can only be assigned the same lesson once
   @@unique([lessonId, studentId])
   @@map("assignments")
 }
 
 // ─── TEACHER ↔ STUDENT LINK ─────────────────────────────
-// Which teachers are responsible for which students (set by Admin)
 
 model TeacherStudent {
   id String @id @default(uuid())
@@ -139,7 +154,82 @@ model TeacherStudent {
 
   assignedAt DateTime @default(now())
 
-  // A teacher-student pair is unique
   @@unique([teacherId, studentId])
   @@map("teacher_students")
+}
+
+// ─── CLASSROOM SESSIONS ──────────────────────────────────
+// Live session: teacher presents slides, students follow in real-time
+
+model ClassroomSession {
+  id           String        @id @default(uuid())
+  status       SessionStatus @default(WAITING)
+  currentSlide Int           @default(0)
+
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  teacherId String
+  teacher   User   @relation("SessionTeacher", fields: [teacherId], references: [id])
+
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+
+  @@map("classroom_sessions")
+}
+
+// ─── PLACEMENT TESTS ─────────────────────────────────────
+
+model PlacementTest {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+  cefrLevel   CefrLevel?
+  isActive    Boolean    @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdBy String
+  creator   User   @relation("TestCreator", fields: [createdBy], references: [id])
+
+  questions Question[]
+  scores    StudentScore[]
+
+  @@map("placement_tests")
+}
+
+model Question {
+  id     String       @id @default(uuid())
+  text   String
+  type   QuestionType @default(MULTIPLE_CHOICE)
+  order  Int          @default(0)
+  points Int          @default(1)
+
+  // JSON for options: [{ label: "A", text: "..." }, ...]
+  options       Json?
+  correctAnswer String
+
+  testId String
+  test   PlacementTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@map("questions")
+}
+
+model StudentScore {
+  id         String     @id @default(uuid())
+  score      Int
+  maxScore   Int
+  cefrResult CefrLevel?
+
+  completedAt DateTime @default(now())
+
+  studentId String
+  student   User @relation("StudentScores", fields: [studentId], references: [id], onDelete: Cascade)
+
+  testId String
+  test   PlacementTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, testId])
+  @@map("student_scores")
 }

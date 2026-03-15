@@ -1,7 +1,7 @@
 "use client";
 
 import { getCategoryConfig, cefrColors } from "@/lib/lessonHelpers";
-import { Play, Eye, UserPlus, Trash2 } from "lucide-react";
+import { Play, Eye, UserPlus, Trash2, Radio } from "lucide-react";
 
 type LessonCardProps = {
   id: string;
@@ -15,7 +15,8 @@ type LessonCardProps = {
   onPreview?: (id: string) => void;
   onAssign?: (id: string) => void;
   onDelete?: (id: string) => void;
-  showActions?: ("launch" | "preview" | "assign" | "delete")[];
+  onClassroom?: (id: string) => void;
+  showActions?: ("launch" | "preview" | "assign" | "delete" | "classroom")[];
 };
 
 export default function LessonCard({
@@ -30,6 +31,7 @@ export default function LessonCard({
   onPreview,
   onAssign,
   onDelete,
+  onClassroom,
   showActions = ["launch", "preview", "assign"],
 }: LessonCardProps) {
   const cat = getCategoryConfig(category);
@@ -109,6 +111,15 @@ export default function LessonCard({
             >
               <UserPlus size={13} />
               Assign
+            </button>
+          )}
+          {showActions.includes("classroom") && onClassroom && (
+            <button
+              onClick={() => onClassroom(id)}
+              className="flex items-center gap-1 bg-violet-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-violet-700 transition-colors"
+            >
+              <Radio size={13} />
+              Classroom
             </button>
           )}
           {showActions.includes("delete") && onDelete && (

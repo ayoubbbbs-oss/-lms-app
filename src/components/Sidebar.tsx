@@ -11,6 +11,7 @@ import {
   LogOut,
   Settings,
   BarChart3,
+  Radio,
 } from "lucide-react";
 import { logout } from "@/app/login/actions";
 
@@ -30,6 +31,7 @@ const roleNavItems: Record<string, NavItem[]> = {
   ],
   TEACHER: [
     { label: "Dashboard", href: "/teacher", icon: <LayoutDashboard size={20} /> },
+    { label: "Classroom", href: "/teacher/classroom", icon: <Radio size={20} /> },
     { label: "My Students", href: "/teacher/students", icon: <Users size={20} /> },
   ],
   STUDENT: [

@@ -238,9 +238,9 @@ export default function LibraryPage() {
                 cefrLevel={lesson.cefrLevel}
                 contentType={lesson.contentType}
                 assignmentCount={lesson._count.assignments}
-                showActions={["launch", "preview", "assign", "delete"]}
+                showActions={["classroom", "launch", "assign", "delete"]}
+                onClassroom={(id) => window.open(`/classroom/${id}`, "_blank")}
                 onLaunch={(id) => window.open(`/admin/lessons/${id}`, "_blank")}
-                onPreview={(id) => window.open(`/admin/lessons/${id}`, "_blank")}
                 onAssign={(id) => {
                   setAssignLessonId(id);
                   setSelectedStudents([]);
