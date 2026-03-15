@@ -8,9 +8,10 @@ import {
   Camera,
   Undo2,
   Redo2,
+  Eraser,
 } from "lucide-react";
 
-export type CanvasTool = "hand" | "pen" | "text" | "image" | "screenshot";
+export type CanvasTool = "hand" | "pen" | "text" | "eraser" | "image" | "screenshot";
 export type BrushSize = "S" | "M" | "L";
 
 const BRUSH_SIZES: Record<BrushSize, number> = { S: 2, M: 5, L: 10 };
@@ -63,6 +64,7 @@ export default function CanvasToolbar({
     { key: "hand", icon: <Hand size={28} strokeWidth={2.5} />, label: "Hand", teacherOnly: false },
     { key: "pen", icon: <Pen size={28} strokeWidth={2.5} />, label: "Pen", teacherOnly: false },
     { key: "text", icon: <Type size={28} strokeWidth={2.5} />, label: "Text", teacherOnly: false },
+    { key: "eraser", icon: <Eraser size={28} strokeWidth={2.5} />, label: "Eraser", teacherOnly: false },
     { key: "image", icon: <ImagePlus size={28} strokeWidth={2.5} />, label: "Image", teacherOnly: true },
     { key: "screenshot", icon: <Camera size={28} strokeWidth={2.5} />, label: "Screenshot", teacherOnly: true },
   ];
