@@ -140,51 +140,51 @@ export default function CanvasClient({
   return (
     <div className="h-screen bg-[#1a1a2e] flex items-center justify-center overflow-hidden">
       <div className="w-full max-w-[1300px] h-[92vh] flex flex-col rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-white">
-        {/* Top bar */}
-        <div className="bg-white border-b border-slate-200 px-4 h-11 flex items-center justify-between flex-shrink-0">
-          <div className="flex items-center gap-3">
+        {/* Top bar — CHUNKY */}
+        <div className="bg-white border-b border-slate-200 px-5 h-16 flex items-center justify-between flex-shrink-0">
+          <div className="flex items-center gap-4">
             {role === "TEACHER" && (
               <button
                 onClick={handleClear}
-                className="flex items-center gap-1.5 bg-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-emerald-600 transition-colors"
+                className="flex items-center gap-2 bg-emerald-500 text-white text-lg font-bold px-5 py-2.5 rounded-lg hover:bg-emerald-600 transition-colors"
               >
-                <Trash2 size={12} />
-                Clean
+                <Trash2 size={22} strokeWidth={2.5} />
+                Clean Canvas
               </button>
             )}
-            <h1 className="text-sm font-semibold text-slate-700">{lessonTitle}</h1>
-            <span className="text-[10px] bg-violet-100 text-violet-700 px-2 py-0.5 rounded font-bold uppercase">
+            <h1 className="text-lg font-bold text-slate-700">{lessonTitle}</h1>
+            <span className="text-sm bg-violet-100 text-violet-700 px-3 py-1 rounded-lg font-extrabold uppercase">
               Canvas
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Zoom */}
-            <div className="flex items-center gap-1 bg-slate-100 rounded-lg px-1.5 py-1">
+          <div className="flex items-center gap-3">
+            {/* Zoom — BIG */}
+            <div className="flex items-center gap-1.5 bg-slate-100 rounded-xl px-3 py-2">
               <button
                 onClick={() => setZoom((z) => Math.max(0.25, z - 0.25))}
-                className="w-6 h-6 flex items-center justify-center text-slate-500 hover:text-slate-700 rounded transition-colors"
+                className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
               >
-                <ZoomOut size={14} />
+                <ZoomOut size={24} strokeWidth={2.5} />
               </button>
-              <span className="text-[11px] font-semibold text-slate-600 w-10 text-center tabular-nums">
+              <span className="text-base font-bold text-slate-600 w-14 text-center tabular-nums">
                 {Math.round(zoom * 100)}%
               </span>
               <button
                 onClick={() => setZoom((z) => Math.min(3, z + 0.25))}
-                className="w-6 h-6 flex items-center justify-center text-slate-500 hover:text-slate-700 rounded transition-colors"
+                className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
               >
-                <ZoomIn size={14} />
+                <ZoomIn size={24} strokeWidth={2.5} />
               </button>
             </div>
 
             {role === "TEACHER" && (
               <Link
                 href={`/classroom/${lessonId}`}
-                className="flex items-center gap-1.5 bg-red-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-red-600 transition-colors"
+                className="flex items-center gap-2 bg-red-500 text-white text-lg font-bold px-5 py-2.5 rounded-lg hover:bg-red-600 transition-colors"
               >
-                <X size={12} />
-                Close
+                <X size={22} strokeWidth={3} />
+                Close Canvas
               </Link>
             )}
           </div>
@@ -208,7 +208,7 @@ export default function CanvasClient({
             onPrivateToggle={handlePrivateToggle}
           />
 
-          <div className="flex-1 ml-14 p-2">
+          <div className="flex-1 ml-20 p-3">
             <CanvasBoard
               paths={paths}
               onPathAdd={handlePathAdd}

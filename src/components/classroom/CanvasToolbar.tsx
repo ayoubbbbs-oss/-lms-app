@@ -60,26 +60,26 @@ export default function CanvasToolbar({
   const isTeacher = role === "TEACHER";
 
   const tools: { key: CanvasTool; icon: React.ReactNode; label: string; teacherOnly: boolean }[] = [
-    { key: "hand", icon: <Hand size={16} />, label: "Hand", teacherOnly: false },
-    { key: "pen", icon: <Pen size={16} />, label: "Pen", teacherOnly: false },
-    { key: "text", icon: <Type size={16} />, label: "Text", teacherOnly: false },
-    { key: "image", icon: <ImagePlus size={16} />, label: "Image", teacherOnly: true },
-    { key: "screenshot", icon: <Camera size={16} />, label: "Screenshot", teacherOnly: true },
+    { key: "hand", icon: <Hand size={28} strokeWidth={2.5} />, label: "Hand", teacherOnly: false },
+    { key: "pen", icon: <Pen size={28} strokeWidth={2.5} />, label: "Pen", teacherOnly: false },
+    { key: "text", icon: <Type size={28} strokeWidth={2.5} />, label: "Text", teacherOnly: false },
+    { key: "image", icon: <ImagePlus size={28} strokeWidth={2.5} />, label: "Image", teacherOnly: true },
+    { key: "screenshot", icon: <Camera size={28} strokeWidth={2.5} />, label: "Screenshot", teacherOnly: true },
   ];
 
   const visibleTools = tools.filter((t) => isTeacher || !t.teacherOnly);
 
   return (
-    <div className="fixed left-3 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-1 bg-white rounded-xl shadow-xl ring-1 ring-slate-200 p-1.5">
-      {/* Tools */}
+    <div className="fixed left-4 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-1.5 bg-white rounded-2xl shadow-2xl ring-1 ring-slate-200 p-2.5">
+      {/* Tools — CHUNKY */}
       {visibleTools.map((tool) => (
         <button
           key={tool.key}
           onClick={() => onToolChange(tool.key)}
           title={tool.label}
-          className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-150 ${
+          className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-150 ${
             activeTool === tool.key
-              ? "bg-sky-600 text-white shadow-sm"
+              ? "bg-sky-600 text-white shadow-md"
               : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
           }`}
         >
@@ -87,22 +87,22 @@ export default function CanvasToolbar({
         </button>
       ))}
 
-      <div className="w-full h-px bg-slate-200 my-1" />
+      <div className="w-full h-px bg-slate-200 my-1.5" />
 
-      {/* Color picker */}
-      <div className="flex flex-col items-center gap-1">
+      {/* Color picker — BIG */}
+      <div className="flex flex-col items-center gap-1.5">
         <div className="relative group">
           <button
-            className="w-7 h-7 rounded-full ring-2 ring-white shadow-md"
+            className="w-10 h-10 rounded-full ring-3 ring-white shadow-lg"
             style={{ backgroundColor: color }}
             title="Color"
           />
-          <div className="absolute left-11 top-0 hidden group-hover:flex bg-white rounded-xl shadow-xl ring-1 ring-slate-200 p-2 gap-1 flex-wrap w-[76px]">
+          <div className="absolute left-14 top-0 hidden group-hover:flex bg-white rounded-xl shadow-2xl ring-1 ring-slate-200 p-3 gap-2 flex-wrap w-[110px]">
             {COLORS.map((c) => (
               <button
                 key={c}
                 onClick={() => onColorChange(c)}
-                className={`w-6 h-6 rounded-full ring-2 transition-transform hover:scale-110 ${
+                className={`w-9 h-9 rounded-full ring-2 transition-transform hover:scale-110 ${
                   c === color ? "ring-sky-500 scale-110" : "ring-slate-200"
                 } ${c === "#FFFFFF" ? "ring-slate-300" : ""}`}
                 style={{ backgroundColor: c }}
@@ -112,14 +112,14 @@ export default function CanvasToolbar({
         </div>
       </div>
 
-      {/* Brush size */}
-      <div className="flex flex-col items-center gap-0.5 py-1">
+      {/* Brush size — BIG */}
+      <div className="flex flex-col items-center gap-1 py-1">
         {(["S", "M", "L"] as BrushSize[]).map((s) => (
           <button
             key={s}
             onClick={() => onBrushSizeChange(s)}
             title={`Brush ${s}`}
-            className={`w-9 h-6 rounded-md text-[10px] font-bold transition-all duration-150 ${
+            className={`w-14 h-9 rounded-lg text-sm font-extrabold transition-all duration-150 ${
               brushSize === s
                 ? "bg-slate-800 text-white"
                 : "text-slate-400 hover:bg-slate-100 hover:text-slate-600"
@@ -130,38 +130,38 @@ export default function CanvasToolbar({
         ))}
       </div>
 
-      <div className="w-full h-px bg-slate-200 my-1" />
+      <div className="w-full h-px bg-slate-200 my-1.5" />
 
-      {/* Undo / Redo */}
+      {/* Undo / Redo — BIG */}
       <button
         onClick={onUndo}
         disabled={!canUndo}
         title="Undo"
-        className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-150"
+        className="w-14 h-14 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-150"
       >
-        <Undo2 size={15} />
+        <Undo2 size={24} strokeWidth={2.5} />
       </button>
       <button
         onClick={onRedo}
         disabled={!canRedo}
         title="Redo"
-        className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-150"
+        className="w-14 h-14 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 disabled:opacity-25 disabled:cursor-not-allowed transition-all duration-150"
       >
-        <Redo2 size={15} />
+        <Redo2 size={24} strokeWidth={2.5} />
       </button>
 
-      {/* Private toggle (teacher only) */}
+      {/* Private toggle — BIG */}
       {isTeacher && (
         <>
-          <div className="w-full h-px bg-slate-200 my-1" />
-          <label className="flex flex-col items-center gap-0.5 cursor-pointer py-1" title="Private mode">
+          <div className="w-full h-px bg-slate-200 my-1.5" />
+          <label className="flex flex-col items-center gap-1 cursor-pointer py-1" title="Private mode">
             <input
               type="checkbox"
               checked={isPrivate}
               onChange={onPrivateToggle}
-              className="w-3.5 h-3.5 text-sky-600 rounded border-slate-300 focus:ring-sky-400"
+              className="w-5 h-5 text-sky-600 rounded border-slate-300 focus:ring-sky-400"
             />
-            <span className="text-[9px] text-slate-400 font-medium">Private</span>
+            <span className="text-xs text-slate-500 font-bold">Private</span>
           </label>
         </>
       )}
